@@ -1,6 +1,7 @@
 package com.example.creatorstore.services;
 
 import com.example.creatorstore.entities.Product;
+import com.example.creatorstore.exceptions.ProductNotFoundException;
 import com.example.creatorstore.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,8 @@ public class ProductService {
 
     public Product updateProduct(Long id, Product product) {
         Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id " + id));
+                .orElseThrow(() ->
+                        new ProductNotFoundException(id));
 
         existingProduct.setName(product.getName());
         existingProduct.setDescription(product.getDescription());
@@ -36,7 +38,8 @@ public class ProductService {
 
     public Product getProductById(Long id) {
         return  productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id " + id));
+                .orElseThrow(() ->
+                        new ProductNotFoundException(id));
     }
 
     public void deleteProduct(Long id) {
