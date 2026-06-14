@@ -12,6 +12,9 @@ import com.example.creatorstore.repositories.OrderRepository;
 import com.example.creatorstore.repositories.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -78,8 +81,15 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public Page<Order> getAllOrders(
+            int page,
+            int size
+    ) {
+
+        Pageable pageable =
+                PageRequest.of(page, size);
+
+        return orderRepository.findAll(pageable);
     }
 
     public Order getOrderById(Long id) {

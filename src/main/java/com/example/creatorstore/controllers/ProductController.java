@@ -5,8 +5,7 @@ import com.example.creatorstore.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping("/api/products")
@@ -26,8 +25,18 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getProducts() {
-        return productService.getProducts();
+    public Page<Product> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        return productService.getProducts(
+                page,
+                size,
+                sortBy,
+                direction
+        );
     }
 
     @GetMapping("/{id}")

@@ -5,8 +5,10 @@ import com.example.creatorstore.exceptions.ProductNotFoundException;
 import com.example.creatorstore.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +34,24 @@ public class ProductService {
         return productRepository.save(existingProduct);
     }
 
-    public List<Product> getProducts() {
-        return productRepository.findAll();
+    public Page<Product> getProducts(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return productRepository.findAll(pageable);
     }
 
     public Product getProductById(Long id) {
-        return  productRepository.findById(id)
+        return productRepository.findById(id)
                 .orElseThrow(() ->
                         new ProductNotFoundException(id));
     }
