@@ -18,6 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public RegisterResponse register(RegisterRequest request) {
 
@@ -77,8 +78,11 @@ public class UserService {
             throw new InvalidCredentialsException();
         }
 
+        String token = jwtService.generateToken(
+                user.getUsername()
+        );
         return LoginResponse.builder()
-                .message("Login successful")
+                .token(token)
                 .build();
     }
 }
