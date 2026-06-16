@@ -1,5 +1,6 @@
 package com.example.creatorstore.dto;
 
+import com.example.creatorstore.entities.Role;
 import lombok.*;
 
 @Getter
@@ -11,5 +12,5 @@ public class RegisterResponse {
     private Long id;
     private String username;
     private String email;
-    private String role;
+    private Role role;
 }

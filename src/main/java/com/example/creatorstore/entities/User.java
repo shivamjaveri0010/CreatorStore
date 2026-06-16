@@ -1,5 +1,7 @@
 package com.example.creatorstore.entities;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,5 +28,6 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

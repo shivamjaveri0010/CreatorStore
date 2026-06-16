@@ -28,6 +28,10 @@ public class CustomUserDetailsService
                                 "User not found"
                         ));
 
+        System.out.println("User: " + user.getUsername());
+        System.out.println("Role: " + user.getRole());
+        System.out.println("Authority: ROLE_" + user.getRole());
+
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),

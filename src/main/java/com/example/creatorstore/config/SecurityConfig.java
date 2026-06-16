@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,12 +34,45 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth ->
                         auth
+
                                 .requestMatchers(
                                         "/auth/**",
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**"
                                 )
                                 .permitAll()
+
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/products/**"
+                                )
+                                .hasAnyRole(
+                                        "ADMIN",
+                                        "CUSTOMER"
+                                )
+
+                                .requestMatchers(
+                                        HttpMethod.POST,
+                                        "/api/products/**"
+                                )
+                                .hasRole("ADMIN")
+
+                                .requestMatchers(
+                                        HttpMethod.PUT,
+                                        "/api/products/**"
+                                )
+                                .hasRole("ADMIN")
+
+                                .requestMatchers(
+                                        HttpMethod.DELETE,
+                                        "/api/products/**"
+                                )
+                                .hasRole("ADMIN")
+
+                                .requestMatchers(
+                                        "/api/orders/**"
+                                )
+                                .authenticated()
 
                                 .anyRequest()
                                 .authenticated()

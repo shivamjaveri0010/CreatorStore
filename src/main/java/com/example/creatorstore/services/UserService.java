@@ -2,6 +2,7 @@ package com.example.creatorstore.services;
 
 import com.example.creatorstore.dto.RegisterRequest;
 import com.example.creatorstore.dto.RegisterResponse;
+import com.example.creatorstore.entities.Role;
 import com.example.creatorstore.entities.User;
 import com.example.creatorstore.exceptions.UserAlreadyExistsException;
 import com.example.creatorstore.repositories.UserRepository;
@@ -48,7 +49,7 @@ public class UserService {
                                 request.getPassword()
                         )
                 )
-                .role("CUSTOMER")
+                .role(Role.CUSTOMER)
                 .build();
 
         User savedUser = userRepository.save(user);
