@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.example.creatorstore.entities.User;
 import com.example.creatorstore.repositories.UserRepository;
+import com.example.creatorstore.entities.Role;
+import com.example.creatorstore.exceptions.UnauthorizedOrderAccessException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -113,9 +115,29 @@ public class OrderService {
         );
     }
 
-    public Order getOrderById(Long id) {
-        return orderRepository.findById(id)
+    public Order getOrderById(
+            Long id,
+            String username
+    ) {
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() ->
                         new OrderNotFoundException(id));
+
+        if (currentUser.getRole() == Role.ADMIN) {
+            return order;
+        }
+
+        if (order.getUser() == null ||
+                !order.getUser().getId().equals(currentUser.getId())) {
+
+            throw new UnauthorizedOrderAccessException();
+        }
+
+        return order;
     }
 }

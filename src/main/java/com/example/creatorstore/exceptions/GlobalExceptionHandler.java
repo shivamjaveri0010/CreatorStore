@@ -96,4 +96,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(error);
     }
+
+    @ExceptionHandler(
+            UnauthorizedOrderAccessException.class
+    )
+    public ResponseEntity<ErrorResponse>
+    handleUnauthorizedOrderAccess(
+            UnauthorizedOrderAccessException e
+    ) {
+
+        ErrorResponse errorResponse =
+                ErrorResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.FORBIDDEN.value())
+                        .message(e.getMessage())
+                        .build();
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(errorResponse);
+    }
 }

@@ -43,7 +43,13 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable Long id) {
-        return  orderService.getOrderById(id);
+    public Order getOrderById(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        return orderService.getOrderById(
+                id,
+                authentication.getName()
+        );
     }
 }
