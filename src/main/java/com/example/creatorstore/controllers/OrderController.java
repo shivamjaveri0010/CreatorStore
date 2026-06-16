@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -18,16 +19,27 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public Order createOrder(@Valid @RequestBody OrderRequest orderRequest) {
-        return orderService.createOrder(orderRequest);
+    public Order createOrder(
+            @Valid @RequestBody OrderRequest orderRequest,
+            Authentication authentication
+    ) {
+        return orderService.createOrder(
+                orderRequest,
+                authentication.getName()
+        );
     }
 
     @GetMapping
     public Page<Order> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            Authentication authentication
     ) {
-        return orderService.getAllOrders(page, size);
+        return orderService.getAllOrders(
+                page,
+                size,
+                authentication.getName()
+        );
     }
 
     @GetMapping("/{id}")

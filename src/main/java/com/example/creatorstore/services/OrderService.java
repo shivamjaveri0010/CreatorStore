@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.example.creatorstore.entities.User;
+import com.example.creatorstore.repositories.UserRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,9 +29,15 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public Order createOrder(OrderRequest orderRequest) {
+    public Order createOrder(OrderRequest orderRequest, String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal totalPrice = BigDecimal.ZERO;
 
@@ -37,6 +45,7 @@ public class OrderService {
         order.setCustomerName(orderRequest.getCustomerName());
         order.setCustomerEmail(orderRequest.getCustomerEmail());
         order.setStatus("CONFIRMED");
+        order.setUser(user);
 
         for (OrderItemRequest itemRequest : orderRequest.getItems()) {
             Product product = productRepository.findById(
@@ -83,13 +92,25 @@ public class OrderService {
 
     public Page<Order> getAllOrders(
             int page,
-            int size
+            int size,
+            String username
     ) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
         Pageable pageable =
                 PageRequest.of(page, size);
 
-        return orderRepository.findAll(pageable);
+        if (user.getRole() == com.example.creatorstore.entities.Role.ADMIN) {
+            return orderRepository.findAll(pageable);
+        }
+
+        return orderRepository.findByUser(
+                user,
+                pageable
+        );
     }
 
     public Order getOrderById(Long id) {
